@@ -12,9 +12,9 @@ driver.get(url)
 cookie = driver.find_element(By.CSS_SELECTOR, value="#cookie")
 
 #Full timeout of game is 5 min
-timeout = time() + 20
+timeout = time() + 5 * 60
 while True and time() <= timeout:
-    #Step timeout is 5 min
+    #Step timeout is 5 secs
     timeout2 = time() + 5
     while True and time() <= timeout2:
         cookie.click()
@@ -23,15 +23,13 @@ while True and time() <= timeout:
     money = int(driver.find_element(
         By.CSS_SELECTOR, value="div#money").text.replace(",", ""))
     #Check all products that are enabled and unlocked:
+    #Also reverse the list, as the most expensive item is the one desired to buy
     products = driver.find_elements(By.CSS_SELECTOR,
-                                    value="div#rightPanel div#store div b")
-    #Reverse the list, as the most expensive item is the one desired to buy
-    products = products[::-1]
+                                    value="#store b")[::-1]
     product_bought = False
     i = 0
-    #Loop the list till, exiting on the first affordable item
+    #Loop the list, exiting on the first affordable item
     while i < len(products) and not product_bought:
-        #print(f"Money: {money}")
         if products[i].text != "":
             price = int(products[i].text.split(" - ")[1].strip().replace(",", ""))
             if price <= money:
@@ -41,9 +39,6 @@ while True and time() <= timeout:
                 i += 1
         else:
             i += 1
-    #Max value is for the last one:
-    #Click on the product
-    #product.click()
 
 #Get cookies per second:
 cookies_per_second = float(driver.find_element(By.CSS_SELECTOR,
